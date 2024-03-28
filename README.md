@@ -5,14 +5,21 @@ Python version: >= 3.11
 1. Bootstrap the machine using `bash bootstrap.sh` script
 2. Local development server can be started using `bash develop_local.sh [runserver|test|docker]` for running local server or tests or docker
 
+#### Features
+- unique id using nanoid
+- Ratelimiting using slowapi
+- middleware example
+- aggregation and grouping at database level
+- support for both sqlite3 and postgresql
 
 ### What could be better:
 - Exception handling
 - Error messaging
 - Validation error handling, have legible error messaging
-- Logging, logging to a file
-- Logging inside docker container, shipping logs
-- 
+- Logging, logging to a file, logging inside docker container, shipping logs
+- No DB migration manager
+- Async database sessions
+- DB switching based on env variable
 
 
 #### How claim_process will communicate with payments, Propose a reasonable solution based on:

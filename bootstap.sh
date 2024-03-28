@@ -1,8 +1,9 @@
 #!/bin/bash
+set -euox
+
+SCRIPT_DIR="$(realpath "$(dirname "$0")")"
 
 # bootstrap script for the project needs only to be called once
-# setups the dependencies / packages and  python virtual env for local development
-
 # install necessary packages
 sudo apt update
 sudo apt install -y python3-pip
@@ -17,4 +18,7 @@ else
   virtualenv .venv # TODO standardize the python version
 fi
 
-# create the database in sqlite
+# activate virtual env and install pip deps
+source $SCRIPT_DIR/.venv/bin/activate
+
+pip install -r $SCRIPT_DIR/requirements.txt

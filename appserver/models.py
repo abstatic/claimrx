@@ -4,7 +4,7 @@ from datetime import datetime
 from appserver.utils import generate_nanoid
 from typing import Optional, List
 from pydantic import field_validator
-
+from sqlalchemy import BigInteger, Column
 
 class ClaimBase(SQLModel):
     u_id: str = Field(default_factory=generate_nanoid, primary_key=True, nullable=False)
@@ -15,8 +15,8 @@ class ClaimBase(SQLModel):
     submitted_procedure: str = Field()
     quadrant: Optional[str]
     plan_group: str = Field(default='')
-    subscriber_id: int
-    provider_npi: int = Field(index=True)
+    subscriber_id: int = Field(sa_column=Column(BigInteger()))
+    provider_npi: int = Field(sa_column=Column(BigInteger()))
     provider_fees: float = Field(default=0.0)
     allowed_fees: float = Field(default=0.0)
     member_coinsurance: float = Field(default=0.0)
