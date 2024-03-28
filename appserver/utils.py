@@ -32,7 +32,7 @@ def preprocess_params(raw_data: dict):
     # parse date
     # assumes format MM/DD/YY HH:MM
     if 'service_date' in processed_params:
-        processed_params['service_date'] = datetime.strptime(processed_params['service_date'], "%m/%d/%y %H:%M").isoformat()
+        processed_params['service_date'] = datetime.strptime(processed_params['service_date'], "%m/%d/%y %H:%M")
 
     custom_field_mapping = {
         "plan/group_#": "plan_group",

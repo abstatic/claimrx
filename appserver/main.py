@@ -26,7 +26,7 @@ db_sesh = Depends(get_db)
 
 
 @app.get("/")
-async def root(db: Session = db_sesh):
+async def root():
     return {"message": "Welcome to ClaimRx"}
 
 
@@ -38,11 +38,13 @@ async def claims_ingest(claims: List[dict], db: Session = db_sesh):
         c = preprocess_params(c)
         processed.append(c)
         c = Claim(**c)
-        c.created_at = datetime.now().isoformat()
+        c.created_at = datetime.now()
+        # c.service_date = c.service_date.strftime('%Y-%m-%d %H:%M:%S')
         db.add(c)
         db.commit()
-        print(c)
-    return {"message": f"Welcome to ClaimRx {claims}", "processed": f"{processed}"}
+
+    # TODO it'd be good to have annotated type for this, better documentation
+    return {"status": f"success", "processed": f"{processed}"}
 
 
 # API for ingesting from a file

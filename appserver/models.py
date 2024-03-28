@@ -8,8 +8,10 @@ from pydantic import field_validator
 
 class Claim(SQLModel, table=True):
     u_id: str = Field(default_factory=generate_nanoid, primary_key=True, nullable=False)
-    created_at: str
-    service_date: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    # TODO adopt this in other places
+    # currency: str = Field(default='USD')
+    service_date: datetime
     submitted_procedure: str
     quadrant: Optional[str]
     plan_group: str = Field(default='')
