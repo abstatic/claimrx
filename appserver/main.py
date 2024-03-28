@@ -3,12 +3,15 @@ import uvicorn
 from fastapi import FastAPI, Request, Depends, File, UploadFile
 from appserver.db import create_db_and_tables, get_db
 from sqlmodel import Session
+from sqlalchemy import func, select
 from appserver.utils import getLogger, preprocess_params
 from middleware import ProcessTimeMiddleware
 from datetime import datetime
 import time
 from appserver.models import ClaimBase, Claim, ClaimRead
 from contextlib import asynccontextmanager
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 log = getLogger(__name__)
 
@@ -24,6 +27,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="ClaimRx", summary="Claim Processing Service", lifespan=lifespan, debug=True)
 app.add_middleware(ProcessTimeMiddleware)
+# Rate limiting
+limiter = Limiter(
+    get_remote_address,
+    default_limits=["2 per minute", "1 per second"],
+    storage_uri="memory://",
+    strategy="moving-window"
+)
 # Dependency
 db_sesh = Depends(get_db)
 
@@ -47,13 +57,14 @@ async def claims_ingest(claims: List[dict], db: Session = db_sesh):
 
         # transform to table mapped class and push to db
         db_claim = Claim.model_validate(c)
+        db_claim.net_fee = c.provider_fees + c.member_copay + c.member_coinsurance - c.allowed_fees
         db.add(db_claim)
         db.commit()
         claims_created.append(ClaimRead.model_validate(c))
         processed.append(c.u_id)
 
     # TODO it'd be good to have annotated type for this, better documentation
-    return {"status": f"success", "u_ids": f"{processed}", "claims": f"{claims_created}"}
+    return {"status": f"success", "u_ids": processed, "claims": claims_created}
 
 
 # API for ingesting from a file
@@ -79,10 +90,33 @@ async def claims_get(u_id: str, db: Session = db_sesh):
 
 
 # API for returning top10 providers by aggregated net_fees generated
-@app.get("/providers/top10")
-async def providers_top10():
-    return {"message": "return top 10 providers"}
+@app.get("/providers/top")
+@limiter.limit("10 per min")
+async def providers_top10(request: Request, db: Session = db_sesh):
+    """
+    Returns the top10 providers by aggregate of net_fee
+    :param request: required for ratelimiting
+    :param db: db injection
+    :return: list of provider id
+    """
 
+    """
+    syntax:
+    SELECT column_1, function_name(column_2)
+    FROM table_name
+    WHERE [condition]
+    GROUP BY column_name
+    ORDER BY column_name;
+    # aggregate on netfee and group_by provider_id
+    """
+    sum_net_fee = func.sum(Claim.net_fee).label('total_net_fee')
+    query = select(Claim.provider_npi, sum_net_fee) \
+        .group_by(Claim.provider_npi) \
+        .order_by(sum_net_fee.desc()) \
+        .limit(10)
+    res = db.exec(query)
+    top_providers = [{'provider_npi': row[0], 'total_net_fee': row[1]} for row in res]
+    return top_providers
 
 # debugging
 @app.get("/claims")

@@ -5,6 +5,7 @@ from appserver.utils import generate_nanoid
 from typing import Optional, Annotated
 from pydantic import field_validator
 
+
 class ClaimBase(SQLModel):
     u_id: str = Field(default_factory=generate_nanoid, primary_key=True, nullable=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -15,7 +16,7 @@ class ClaimBase(SQLModel):
     quadrant: Optional[str]
     plan_group: str = Field(default='')
     subscriber_id: int
-    provider_npi: int
+    provider_npi: int = Field(index=True)
     provider_fees: float = Field(default=0.0)
     allowed_fees: float = Field(default=0.0)
     member_coinsurance: float = Field(default=0.0)
@@ -40,9 +41,8 @@ class ClaimBase(SQLModel):
         return v
 
 
-
 class Claim(ClaimBase, table=True):
-    pass
+    net_fee: float = Field(default=0.0)
 
 
 class ClaimRead(ClaimBase):
