@@ -1,12 +1,13 @@
 from typing import List
 import uvicorn
 from fastapi import FastAPI, Request, Depends, File, UploadFile
-from db import create_db_and_tables, get_db
+from appserver.db import create_db_and_tables, get_db
 from sqlmodel import Session
-gitfrom utils import getLogger
-from middleware import ProcessTimeMiddleware, TransformJSONMiddleware
+from appserver.utils import getLogger, preprocess_params
+from middleware import ProcessTimeMiddleware
+from datetime import datetime
 import time
-from models import Claim
+from appserver.models import Claim
 from contextlib import asynccontextmanager
 log = getLogger(__name__)
 
@@ -31,10 +32,17 @@ async def root(db: Session = db_sesh):
 
 # API for ingesting JSON
 @app.post("/claim/add")
-async def claims_ingest(request: Request, claims: List[dict]):
-    request_body = await request.json()
-    body2 = await request.body()
-    return {"message": f"Welcome to ClaimRx {request_body} {claims}"}
+async def claims_ingest(claims: List[dict], db: Session = db_sesh):
+    processed = []
+    for c in claims:
+        c = preprocess_params(c)
+        processed.append(c)
+        c = Claim(**c)
+        c.created_at = datetime.now().isoformat()
+        db.add(c)
+        db.commit()
+        print(c)
+    return {"message": f"Welcome to ClaimRx {claims}", "processed": f"{processed}"}
 
 
 # API for ingesting from a file
@@ -50,10 +58,15 @@ async def claims_get(u_id: int): # , response_model=Claim
 
 
 # API for returning top10 providers by aggregated net_fees generated
-@app.get("providers/top10")
+@app.get("/providers/top10")
 async def providers_top10():
     return {"message": "return top 10 providers"}
 
+# debugging
+@app.get("/claims")
+async def get_claims(db: Session = db_sesh) -> List[Claim]:
+    return db.query(Claim).all()
+
 # for debugging
 if __name__ == "__main__":
-    uvicorn.run('app.main:app', host='127.0.0.1', port=8000, reload=True)
+    uvicorn.run('appserver.main:app', host='127.0.0.1', port=8000, reload=True)

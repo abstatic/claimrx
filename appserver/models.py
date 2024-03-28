@@ -1,6 +1,6 @@
 from sqlmodel import Field, SQLModel, create_engine
 from datetime import datetime
-from utils import generate_nanoid
+from appserver.utils import generate_nanoid
 from typing import Optional
 from typing_extensions import Annotated
 from pydantic import field_validator
@@ -8,8 +8,8 @@ from pydantic import field_validator
 
 class Claim(SQLModel, table=True):
     u_id: str = Field(default_factory=generate_nanoid, primary_key=True, nullable=False)
-    created_at: datetime = Field(default=datetime.utcnow, nullable=False)
-    service_datetime: datetime = Field(default=datetime.utcnow, nullable=False)
+    created_at: str
+    service_date: str
     submitted_procedure: str
     quadrant: Optional[str]
     plan_group: str = Field(default='')
