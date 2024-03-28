@@ -1,8 +1,8 @@
 import sqlalchemy
-from sqlmodel import Field, SQLModel, create_engine
+from sqlmodel import Field, SQLModel
 from datetime import datetime
 from appserver.utils import generate_nanoid
-from typing import Optional, Annotated
+from typing import Optional, List
 from pydantic import field_validator
 
 
@@ -45,6 +45,7 @@ class Claim(ClaimBase, table=True):
     net_fee: float = Field(default=0.0)
 
 
+# Response Models
 class ClaimRead(ClaimBase):
     @field_validator('provider_fees', 'allowed_fees', 'member_coinsurance', 'member_copay')
     @classmethod
@@ -56,3 +57,28 @@ class ClaimRead(ClaimBase):
     member_coinsurance: float = Field(default=0.0)
     member_copay: float = Field(default=0.0)
 
+
+class ClaimReadResponse(SQLModel):
+    status: str
+    claim: ClaimRead
+
+
+class ClaimCreateResponse(SQLModel):
+    status: str
+    u_ids: List[int]
+    claim: List[ClaimRead]
+
+
+class ClaimListReadResponse(SQLModel):
+    status: str
+    claim: List[Claim]
+
+
+class ProviderEntry(SQLModel):
+    provider_npi: int
+    total_net_fee: float
+
+
+class TopProviderResponse(SQLModel):
+    status: str
+    top_providers: List[ProviderEntry]

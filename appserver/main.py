@@ -7,14 +7,13 @@ from sqlalchemy import func, select
 from appserver.utils import getLogger, preprocess_params
 from middleware import ProcessTimeMiddleware
 from datetime import datetime
-import time
-from appserver.models import ClaimBase, Claim, ClaimRead
+from appserver.models import (ClaimBase, Claim, ClaimRead, ClaimReadResponse, ClaimCreateResponse,
+                              ClaimListReadResponse, TopProviderResponse, ProviderEntry)
 from contextlib import asynccontextmanager
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 log = getLogger(__name__)
-
 
 # config before and after app start/stop
 @asynccontextmanager
@@ -45,7 +44,13 @@ async def root():
 
 # API for ingesting JSON
 @app.post("/claim/add")
-async def claims_ingest(claims: List[dict], db: Session = db_sesh):
+async def claims_ingest(claims: List[dict], db: Session = db_sesh) -> ClaimCreateResponse:
+    """
+    This method processes claims,
+    :param claims: list of dict, since keys can be in any format
+    :param db: db inject
+    :return: return u_ids and claim objects which are constructed
+    """
     processed = []
     claims_created = []
     for c in claims:
@@ -64,7 +69,7 @@ async def claims_ingest(claims: List[dict], db: Session = db_sesh):
         processed.append(c.u_id)
 
     # TODO it'd be good to have annotated type for this, better documentation
-    return {"status": f"success", "u_ids": processed, "claims": claims_created}
+    return ClaimCreateResponse(status="success", u_ids=processed, claim=claims_created)
 
 
 # API for ingesting from a file
@@ -74,7 +79,7 @@ async def claims_upload():
 
 
 @app.get("/claim/get/{u_id}")
-async def claims_get(u_id: str, db: Session = db_sesh):
+async def claims_get(u_id: str, db: Session = db_sesh) -> ClaimReadResponse:
     """
     Given a claim id return the claim info
     :param u_id: unique id of claim
@@ -84,15 +89,13 @@ async def claims_get(u_id: str, db: Session = db_sesh):
     ins = db.get(Claim, u_id)
     if ins is not None:
         ins = ClaimRead(**ins.model_dump())
-        return {"status": "success", "claim": ins}
-    else:
-        return {"status": "failed"}
-
+        resp = ClaimReadResponse(status="success", claim=ins)
+        return resp
 
 # API for returning top10 providers by aggregated net_fees generated
 @app.get("/providers/top")
 @limiter.limit("10 per min")
-async def providers_top10(request: Request, db: Session = db_sesh):
+async def providers_top10(request: Request, db: Session = db_sesh) -> TopProviderResponse:
     """
     Returns the top10 providers by aggregate of net_fee
     :param request: required for ratelimiting
@@ -115,18 +118,22 @@ async def providers_top10(request: Request, db: Session = db_sesh):
         .order_by(sum_net_fee.desc()) \
         .limit(10)
     res = db.exec(query)
-    top_providers = [{'provider_npi': row[0], 'total_net_fee': row[1]} for row in res]
-    return top_providers
+
+    top_providers = []
+    for row in res:
+        top_providers.append(ProviderEntry(provider_npi=row[0], total_net_fee=row[1]))
+
+    return TopProviderResponse(status="success", top_providers=top_providers)
 
 # debugging
 @app.get("/claims")
-async def get_claims(db: Session = db_sesh) -> List[ClaimRead]:
+async def get_claims(db: Session = db_sesh) -> ClaimListReadResponse:
     """
     Return all claims in DB as a list. Only for debugging
     :param db:
     :return: List of ClaimRead objects
     """
-    return db.query(Claim).all()
+    return ClaimListReadResponse(status="success", claim=db.query(Claim).all())
 
 
 # for debugging
