@@ -1,11 +1,11 @@
 from typing import List
 import uvicorn
-from fastapi import FastAPI, Request, Depends, File, UploadFile
+from fastapi import FastAPI, Request, Depends, File, UploadFile, HTTPException
 from appserver.db import create_db_and_tables, get_db
 from sqlmodel import Session
 from sqlalchemy import func, select
 from appserver.utils import getLogger, preprocess_params
-from middleware import ProcessTimeMiddleware
+from appserver.middleware import ProcessTimeMiddleware
 from datetime import datetime
 from appserver.models import (ClaimBase, Claim, ClaimRead, ClaimReadResponse, ClaimCreateResponse,
                               ClaimListReadResponse, TopProviderResponse, ProviderEntry)
@@ -35,11 +35,6 @@ limiter = Limiter(
 )
 # Dependency
 db_sesh = Depends(get_db)
-
-
-@app.get("/")
-async def root():
-    return {"message": "Welcome to ClaimRx"}
 
 
 # API for ingesting JSON
@@ -79,7 +74,7 @@ async def claims_upload():
 
 
 @app.get("/claim/get/{u_id}")
-async def claims_get(u_id: str, db: Session = db_sesh) -> ClaimReadResponse:
+async def claims_get(u_id: str, db: Session = db_sesh):
     """
     Given a claim id return the claim info
     :param u_id: unique id of claim
@@ -91,6 +86,8 @@ async def claims_get(u_id: str, db: Session = db_sesh) -> ClaimReadResponse:
         ins = ClaimRead(**ins.model_dump())
         resp = ClaimReadResponse(status="success", claim=ins)
         return resp
+    else:
+        raise HTTPException(status_code=404, detail="Item not found")
 
 # API for returning top10 providers by aggregated net_fees generated
 @app.get("/providers/top")
@@ -133,6 +130,9 @@ async def get_claims(db: Session = db_sesh) -> ClaimListReadResponse:
     :param db:
     :return: List of ClaimRead objects
     """
+    res = db.query(Claim).all()
+    if len(res) == 0:
+        raise HTTPException(status_code=404, detail="Item not found")
     return ClaimListReadResponse(status="success", claim=db.query(Claim).all())
 
 

@@ -1,5 +1,10 @@
 Python version: >= 3.11
 
+### What could be better:
+- Exception handling
+- Error messaging
+- Validation error handling, have legible error messaging
+
 Uses nanoid to generate unique id
 TODO
 - Cleanup the reqs file

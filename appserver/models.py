@@ -65,13 +65,13 @@ class ClaimReadResponse(SQLModel):
 
 class ClaimCreateResponse(SQLModel):
     status: str
-    u_ids: List[int]
+    u_ids: List[str]
     claim: List[ClaimRead]
 
 
 class ClaimListReadResponse(SQLModel):
     status: str
-    claim: List[Claim]
+    claim: List[ClaimRead]
 
 
 class ProviderEntry(SQLModel):
