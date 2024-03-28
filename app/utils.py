@@ -14,3 +14,6 @@ def getLogger(name):
 
 def generate_nanoid():
     return generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 10)
+
+
+def preprocess_params(raw_data: dict):
