@@ -7,6 +7,7 @@
 sudo apt update
 sudo apt install -y python3-pip
 sudo apt install -y python3-virtualenv
+sudo apt install -y sqlite3
 
 # setup the virtual environemnt
 # TODO fix the pathing, below might fail if bootstrap script is being called from any other location
@@ -16,4 +17,4 @@ else
   virtualenv .venv # TODO standardize the python version
 fi
 
-
+# create the database in sqlite
