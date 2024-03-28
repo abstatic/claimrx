@@ -87,6 +87,7 @@ async def claims_get(u_id: str, db: Session = db_sesh):
         resp = ClaimReadResponse(status="success", claim=ins)
         return resp
     else:
+        log.error(f"Invalid lookup for claim id {u_id}")
         raise HTTPException(status_code=404, detail="Item not found")
 
 # API for returning top10 providers by aggregated net_fees generated

@@ -2,15 +2,22 @@
 Python version: >= 3.11
 
 ## Local Development
+
+API gets hosted on `localhost:8000`
+
 1. Bootstrap the machine using `bash bootstrap.sh` script
 2. Local development server can be started using `bash develop_local.sh [runserver|test|docker]` for running local server or tests or docker
+   1. `bash develop_local.sh docker` would only make single container
+   2. `bash develop_local.sh dockercompose` would run with postgresql support using docker compose. To kill docker compose use docker-compose down
 
 #### Features
 - unique id using nanoid
 - Ratelimiting using slowapi
 - middleware example
 - aggregation and grouping at database level
-- support for both sqlite3 and postgresql
+- support for both sqlite3 and postgresql. refer `db.py` to change the connection string
+- logic for validation and easy to extend validation
+- logic for input parameter disambugation: lowercase and repalce spaces with single underscore (snake_case)
 
 ### What could be better:
 - Exception handling
@@ -19,8 +26,6 @@ Python version: >= 3.11
 - Logging, logging to a file, logging inside docker container, shipping logs
 - No DB migration manager
 - Async database sessions
-- DB switching based on env variable
-
 
 #### How claim_process will communicate with payments, Propose a reasonable solution based on:
  - What needs to be done if there is a failure in either service and steps need to be unwinded.

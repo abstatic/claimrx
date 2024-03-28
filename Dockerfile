@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 RUN apt update
-RUN apt install -y python3-pip
+RUN apt install -y python3-pip libpq-dev gcc
 
 COPY ./requirements.txt .
 

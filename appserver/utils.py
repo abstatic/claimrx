@@ -1,14 +1,15 @@
 import logging
 from nanoid import generate
 from datetime import datetime
+import sys
 
 def getLogger(name):
     log = logging.getLogger(name)
-    # handler = logging.StreamHandler(sys.stdout)
-    # formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    # handler.setFormatter(formatter)
-    # log.addHandler(handler)
-    # log.setLevel(logging.INFO)
+    handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
+    log.setLevel(logging.INFO)
     return log
 
 
