@@ -1,13 +1,18 @@
+
 Python version: >= 3.11
+
+## Local Development
+1. Bootstrap the machine using `bash bootstrap.sh` script
+2. Local development server can be started using `bash develop_local.sh [runserver|test|docker]` for running local server or tests or docker
+
 
 ### What could be better:
 - Exception handling
 - Error messaging
 - Validation error handling, have legible error messaging
-
-Uses nanoid to generate unique id
-TODO
-- Cleanup the reqs file
+- Logging, logging to a file
+- Logging inside docker container, shipping logs
+- 
 
 
 #### How claim_process will communicate with payments, Propose a reasonable solution based on:
