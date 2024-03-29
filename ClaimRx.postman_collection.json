@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "1c89a990-0ec8-480b-aeb9-c723a35003fa",
+		"name": "ClaimRx",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19415687"
+	},
+	"item": [
+		{
+			"name": "Add claim",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n  {\n    \"service date\": \"3/28/18 0:00\",\n    \"submitted procedure\": \"D0180\",\n    \"quadrant\": \"\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189502,\n    \"Provider NPI\": 1497775530,\n    \"provider fees\": \"$100.00 \",\n    \"Allowed fees\": \"$100.00 \",\n    \"member coinsurance\": \"$0.00 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"3/28/18 0:00\",\n    \"submitted procedure\": \"D0210\",\n    \"quadrant\": \"\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189502,\n    \"Provider NPI\": 1497775530,\n    \"provider fees\": \"$108.00 \",\n    \"Allowed fees\": \"$108.00 \",\n    \"member coinsurance\": \"$0.00 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"3/28/18 0:00\",\n    \"submitted procedure\": \"D4346\",\n    \"quadrant\": \"\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189502,\n    \"Provider NPI\": 1497775530,\n    \"provider fees\": \"$130.00 \",\n    \"Allowed fees\": \"$65.00 \",\n    \"member coinsurance\": \"$16.25 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"3/28/18 0:00\",\n    \"submitted procedure\": \"D4211\",\n    \"quadrant\": \"UR\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189502,\n    \"Provider NPI\": 1497775530,\n    \"provider fees\": \"$178.00 \",\n    \"Allowed fees\": \"$178.00 \",\n    \"member coinsurance\": \"$35.60 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"02/19/19 03:01\",\n    \"submitted procedure\": \"D1110\",\n    \"quadrant\": \"UR\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189528,\n    \"Provider NPI\": 1497775672,\n    \"provider fees\": \"$174.00 \",\n    \"Allowed fees\": \"$76.00 \",\n    \"member coinsurance\": \"$34.00 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"05/12/18 18:27\",\n    \"submitted procedure\": \"D0180\",\n    \"quadrant\": \"\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189527,\n    \"Provider NPI\": 1497775768,\n    \"provider fees\": \"$144.00 \",\n    \"Allowed fees\": \"$56.00 \",\n    \"member coinsurance\": \"$35.00 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"07/08/18 22:41\",\n    \"submitted procedure\": \"D2412\",\n    \"quadrant\": \"UR\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189557,\n    \"Provider NPI\": 1497776133,\n    \"provider fees\": \"$115.00 \",\n    \"Allowed fees\": \"$51.00 \",\n    \"member coinsurance\": \"$10.00 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"03/21/19 13:21\",\n    \"submitted procedure\": \"D4346\",\n    \"quadrant\": \"UR\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189597,\n    \"Provider NPI\": 1497775874,\n    \"provider fees\": \"$93.00 \",\n    \"Allowed fees\": \"$73.00 \",\n    \"member coinsurance\": \"$24.00 \",\n    \"member copay\": \"$0.00 \"\n  },\n  {\n    \"service date\": \"05/17/18 11:54\",\n    \"submitted procedure\": \"D1110\",\n    \"quadrant\": \"\",\n    \"Plan/Group #\": \"GRP-1000\",\n    \"Subscriber#\": 3730189593,\n    \"Provider NPI\": 1497776000,\n    \"provider fees\": \"$148.00 \",\n    \"Allowed fees\": \"$81.00 \",\n    \"member coinsurance\": \"$24.00 \",\n    \"member copay\": \"$0.00 \"\n  }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/claim/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"claim",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Claims",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/claims",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"claims"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a single claim",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/claim/get/9tnVQQ0bKt",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"claim",
+						"get",
+						"9tnVQQ0bKt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get top providers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/providers/top",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"providers",
+						"top"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
