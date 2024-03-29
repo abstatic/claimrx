@@ -17,7 +17,9 @@ API gets hosted on `localhost:8000`
 - aggregation and grouping at database level
 - support for both sqlite3 and postgresql. refer `db.py` to change the connection string
 - logic for validation and easy to extend validation
-- logic for input parameter disambugation: lowercase and repalce spaces with single underscore (snake_case)
+- logic for input parameter disambugation: lowercase and repalce spaces with single underscore (snake_case) ref- utils.py:20
+- Handles multiple format of input. they keys can have spaces, different cases etc
+- Script to generate sample data, scripts/sample_generator.py
 
 ### What could be better:
 - Exception handling
